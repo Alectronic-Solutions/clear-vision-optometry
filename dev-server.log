@@ -3219,3 +3219,9 @@ https://react.dev/link/hydration-mismatch
  GET / 200 in 79ms (next.js: 51ms, application-code: 28ms)
 [browser] Image with src "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=500&fit=crop&crop=face" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio. (file://c:/Dev/Clear Vision Optometry/clear-vision-optometry/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
 [browser] Image with src "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=500&fit=crop&crop=face" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio. (file://c:/Dev/Clear Vision Optometry/clear-vision-optometry/.next/dev/static/chunks/node_modules_next_dist_1ybzpk2._.js:2477:13)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.174:3001
+✓ Ready in 568ms
+
