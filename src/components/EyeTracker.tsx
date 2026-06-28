@@ -11,17 +11,14 @@ const TOP_Y    = 68;   // tip of upper lid
 const BOT_Y    = 324;  // tip of lower lid
 const MID_Y    = 196;  // vertical center (lids meet here)
 
-// Lids extend well past center so they meet cleanly when closed
-const UPPER_FILL_Y = MID_Y + 80;  // upper lid covers well past center
-const LOWER_FILL_Y = MID_Y - 80;  // lower lid covers well past center
-
+// Each lid fills the entire eye so there is never a gap when closed
 const UPPER_LID_PATH =
   `M 20 200 C 80 ${TOP_Y}, 155 ${TOP_Y}, 200 ${TOP_Y} C 245 ${TOP_Y}, 320 ${TOP_Y}, 380 200` +
-  ` L 380 ${UPPER_FILL_Y} L 20 ${UPPER_FILL_Y} Z`;
+  ` L 380 ${BOT_Y} L 20 ${BOT_Y} Z`;
 
 const LOWER_LID_PATH =
   `M 20 200 C 80 ${BOT_Y}, 155 ${BOT_Y}, 200 ${BOT_Y} C 245 ${BOT_Y}, 320 ${BOT_Y}, 380 200` +
-  ` L 380 ${LOWER_FILL_Y} L 20 ${LOWER_FILL_Y} Z`;
+  ` L 380 ${TOP_Y} L 20 ${TOP_Y} Z`;
 
 const EYE_COLORS: { grad: [string, string, string, string]; fiber: string }[] = [
   { grad: ['#C8E8FA', '#4AAAD8', '#1660A0', '#072040'], fiber: '#0A2A50' },
@@ -301,7 +298,7 @@ export default function EyeTracker() {
           <path d={LOWER_LID_PATH} fill="url(#lowerSkin)" />
           {/* Lower lash line */}
           <path
-            d={`M 30 ${LOWER_FILL_Y} C 100 ${LOWER_FILL_Y + 3}, 160 ${LOWER_FILL_Y + 5}, 200 ${LOWER_FILL_Y + 5} C 240 ${LOWER_FILL_Y + 5}, 305 ${LOWER_FILL_Y + 3}, 370 ${LOWER_FILL_Y}`}
+            d={`M 30 ${MID_Y} C 100 ${MID_Y + 3}, 160 ${MID_Y + 5}, 200 ${MID_Y + 5} C 240 ${MID_Y + 5}, 305 ${MID_Y + 3}, 370 ${MID_Y}`}
             stroke="#1A0A08" strokeWidth="2" strokeOpacity="0.55" fill="none" strokeLinecap="round"
           />
         </g>
