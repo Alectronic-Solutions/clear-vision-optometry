@@ -11,14 +11,8 @@ const TOP_Y    = 68;   // tip of upper lid
 const BOT_Y    = 324;  // tip of lower lid
 const MID_Y    = 196;  // vertical center (lids meet here)
 
-// Each lid fills the entire eye so there is never a gap when closed
-const UPPER_LID_PATH =
-  `M 20 200 C 80 ${TOP_Y}, 155 ${TOP_Y}, 200 ${TOP_Y} C 245 ${TOP_Y}, 320 ${TOP_Y}, 380 200` +
-  ` L 380 ${BOT_Y} L 20 ${BOT_Y} Z`;
-
-const LOWER_LID_PATH =
-  `M 20 200 C 80 ${BOT_Y}, 155 ${BOT_Y}, 200 ${BOT_Y} C 245 ${BOT_Y}, 320 ${BOT_Y}, 380 200` +
-  ` L 380 ${TOP_Y} L 20 ${TOP_Y} Z`;
+// Full eye almond shape — used as static skin fill for both lids
+const EYE_ALMOND = `M 20 200 C 80 ${TOP_Y}, 155 ${TOP_Y}, 200 ${TOP_Y} C 245 ${TOP_Y}, 320 ${TOP_Y}, 380 200 C 320 ${BOT_Y}, 245 ${BOT_Y}, 200 ${BOT_Y} C 155 ${BOT_Y}, 80 ${BOT_Y}, 20 200 Z`;
 
 const EYE_COLORS: { grad: [string, string, string, string]; fiber: string }[] = [
   { grad: ['#C8E8FA', '#4AAAD8', '#1660A0', '#072040'], fiber: '#0A2A50' },
@@ -216,6 +210,26 @@ export default function EyeTracker() {
           <stop offset="0%"   stopColor="#EED8C0" />
           <stop offset="100%" stopColor="#C8A882" />
         </linearGradient>
+
+        {/* Sliding rect masks — a plain rect avoids the corner-gap problem of scaleY on curved paths */}
+        <mask id="upperLidReveal">
+          <rect x="-10" y={TOP_Y - 10} width="420" height={BOT_Y - TOP_Y + 20}
+            fill="white"
+            style={{
+              transformOrigin: `200px ${TOP_Y}px`,
+              transform: `scaleY(${upperScale})`,
+              transition: upperTransition,
+            }} />
+        </mask>
+        <mask id="lowerLidReveal">
+          <rect x="-10" y={TOP_Y - 10} width="420" height={BOT_Y - TOP_Y + 20}
+            fill="white"
+            style={{
+              transformOrigin: `200px ${BOT_Y}px`,
+              transform: `scaleY(${lowerScale})`,
+              transition: lowerTransition,
+            }} />
+        </mask>
       </defs>
 
       {/* ── SCLERA — fixed ───────────────────────────── */}
@@ -261,47 +275,32 @@ export default function EyeTracker() {
         <rect x="0" y="210" width="400" height="190" fill="url(#botShadow)" />
       </g>
 
-      {/* ── UPPER EYELID — sweeps DOWN ────────────────── */}
-      <g clipPath="url(#lid)">
-        <g style={{
-          transform: `scaleY(${upperScale})`,
-          transformOrigin: `200px ${TOP_Y}px`,
-          transition: upperTransition,
-        }}>
-          <path d={UPPER_LID_PATH} fill="url(#upperSkin)" />
-          {/* Lash line sits at MID_Y so it lands at the seam when fully closed */}
-          <path
-            d={`M 30 ${MID_Y} C 100 ${MID_Y - 4}, 160 ${MID_Y - 6}, 200 ${MID_Y - 6} C 240 ${MID_Y - 6}, 305 ${MID_Y - 4}, 370 ${MID_Y}`}
-            stroke="#1A0A08" strokeWidth="3.5" strokeOpacity="0.85" fill="none" strokeLinecap="round"
-          />
-          {/* Eyelash strokes */}
-          {[0.18,0.28,0.38,0.48,0.58,0.68,0.78,0.88].map((t, i) => {
-            const x = 20 + t * 360;
-            const curve = Math.sin(t * Math.PI) * 12;
-            return (
-              <path key={i}
-                d={`M ${x} ${MID_Y - 4} Q ${x + (i % 2 === 0 ? -4 : 4)} ${MID_Y - 14}, ${x + (i % 2 === 0 ? -6 : 6)} ${MID_Y - 22 - curve * 0.5}`}
-                stroke="#0D0808" strokeWidth="1.8" strokeOpacity="0.80" fill="none" strokeLinecap="round"
-              />
-            );
-          })}
-        </g>
+      {/* ── UPPER EYELID — sweeps DOWN via mask rect ─── */}
+      <g clipPath="url(#lid)" mask="url(#upperLidReveal)">
+        <path d={EYE_ALMOND} fill="url(#upperSkin)" />
+        <path
+          d={`M 30 ${MID_Y} C 100 ${MID_Y - 4}, 160 ${MID_Y - 6}, 200 ${MID_Y - 6} C 240 ${MID_Y - 6}, 305 ${MID_Y - 4}, 370 ${MID_Y}`}
+          stroke="#1A0A08" strokeWidth="3.5" strokeOpacity="0.85" fill="none" strokeLinecap="round"
+        />
+        {[0.18,0.28,0.38,0.48,0.58,0.68,0.78,0.88].map((t, i) => {
+          const x = 20 + t * 360;
+          const curve = Math.sin(t * Math.PI) * 12;
+          return (
+            <path key={i}
+              d={`M ${x} ${MID_Y - 4} Q ${x + (i % 2 === 0 ? -4 : 4)} ${MID_Y - 14}, ${x + (i % 2 === 0 ? -6 : 6)} ${MID_Y - 22 - curve * 0.5}`}
+              stroke="#0D0808" strokeWidth="1.8" strokeOpacity="0.80" fill="none" strokeLinecap="round"
+            />
+          );
+        })}
       </g>
 
-      {/* ── LOWER EYELID — sweeps UP ──────────────────── */}
-      <g clipPath="url(#lid)">
-        <g style={{
-          transform: `scaleY(${lowerScale})`,
-          transformOrigin: `200px ${BOT_Y}px`,
-          transition: lowerTransition,
-        }}>
-          <path d={LOWER_LID_PATH} fill="url(#lowerSkin)" />
-          {/* Lower lash line */}
-          <path
-            d={`M 30 ${MID_Y} C 100 ${MID_Y + 3}, 160 ${MID_Y + 5}, 200 ${MID_Y + 5} C 240 ${MID_Y + 5}, 305 ${MID_Y + 3}, 370 ${MID_Y}`}
-            stroke="#1A0A08" strokeWidth="2" strokeOpacity="0.55" fill="none" strokeLinecap="round"
-          />
-        </g>
+      {/* ── LOWER EYELID — sweeps UP via mask rect ────── */}
+      <g clipPath="url(#lid)" mask="url(#lowerLidReveal)">
+        <path d={EYE_ALMOND} fill="url(#lowerSkin)" />
+        <path
+          d={`M 30 ${MID_Y} C 100 ${MID_Y + 3}, 160 ${MID_Y + 5}, 200 ${MID_Y + 5} C 240 ${MID_Y + 5}, 305 ${MID_Y + 3}, 370 ${MID_Y}`}
+          stroke="#1A0A08" strokeWidth="2" strokeOpacity="0.55" fill="none" strokeLinecap="round"
+        />
       </g>
 
       {/* ── EYE OUTLINE — always on top ─────────────── */}
