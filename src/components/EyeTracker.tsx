@@ -11,9 +11,9 @@ const TOP_Y    = 68;   // tip of upper lid
 const BOT_Y    = 324;  // tip of lower lid
 const MID_Y    = 196;  // vertical center (lids meet here)
 
-// Lids extend PAST center so they definitely overlap — no gap
-const UPPER_FILL_Y = MID_Y + 40;  // upper lid covers past center
-const LOWER_FILL_Y = MID_Y - 40;  // lower lid covers past center
+// Lids extend well past center so they meet cleanly when closed
+const UPPER_FILL_Y = MID_Y + 80;  // upper lid covers well past center
+const LOWER_FILL_Y = MID_Y - 80;  // lower lid covers well past center
 
 const UPPER_LID_PATH =
   `M 20 200 C 80 ${TOP_Y}, 155 ${TOP_Y}, 200 ${TOP_Y} C 245 ${TOP_Y}, 320 ${TOP_Y}, 380 200` +
@@ -272,9 +272,9 @@ export default function EyeTracker() {
           transition: upperTransition,
         }}>
           <path d={UPPER_LID_PATH} fill="url(#upperSkin)" />
-          {/* Lash line at bottom edge of lid */}
+          {/* Lash line sits at MID_Y so it lands at the seam when fully closed */}
           <path
-            d={`M 30 ${UPPER_FILL_Y} C 100 ${UPPER_FILL_Y - 4}, 160 ${UPPER_FILL_Y - 6}, 200 ${UPPER_FILL_Y - 6} C 240 ${UPPER_FILL_Y - 6}, 305 ${UPPER_FILL_Y - 4}, 370 ${UPPER_FILL_Y}`}
+            d={`M 30 ${MID_Y} C 100 ${MID_Y - 4}, 160 ${MID_Y - 6}, 200 ${MID_Y - 6} C 240 ${MID_Y - 6}, 305 ${MID_Y - 4}, 370 ${MID_Y}`}
             stroke="#1A0A08" strokeWidth="3.5" strokeOpacity="0.85" fill="none" strokeLinecap="round"
           />
           {/* Eyelash strokes */}
@@ -283,7 +283,7 @@ export default function EyeTracker() {
             const curve = Math.sin(t * Math.PI) * 12;
             return (
               <path key={i}
-                d={`M ${x} ${UPPER_FILL_Y - 4} Q ${x + (i % 2 === 0 ? -4 : 4)} ${UPPER_FILL_Y - 14}, ${x + (i % 2 === 0 ? -6 : 6)} ${UPPER_FILL_Y - 22 - curve * 0.5}`}
+                d={`M ${x} ${MID_Y - 4} Q ${x + (i % 2 === 0 ? -4 : 4)} ${MID_Y - 14}, ${x + (i % 2 === 0 ? -6 : 6)} ${MID_Y - 22 - curve * 0.5}`}
                 stroke="#0D0808" strokeWidth="1.8" strokeOpacity="0.80" fill="none" strokeLinecap="round"
               />
             );

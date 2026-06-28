@@ -16,7 +16,11 @@ export default function Nav() {
           className="flex items-center gap-2"
           aria-label="Clear Vision Optometry — home"
         >
-          <img src="/logo.svg" alt="" className="h-5 w-5" />
+          <svg viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="12" cy="12" r="1" fill="#111827" stroke="none"/>
+          </svg>
           <span className="font-display text-sm font-light tracking-[0.08em] text-cv-ink">
             Clear Vision Optometry
           </span>
