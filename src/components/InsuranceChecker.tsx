@@ -38,7 +38,7 @@ export default function InsuranceChecker() {
               aria-pressed={selectedId === p.id}
               className="btn-3d cursor-pointer text-sm px-5 py-2.5 bg-cv-teal text-white"
             >
-              {p.name}
+              <span>{p.name}</span>
             </button>
           ))}
         </div>
@@ -113,7 +113,7 @@ export default function InsuranceChecker() {
                   href="#book"
                   className="btn-3d cursor-pointer inline-block mt-4 text-xs font-semibold tracking-widest uppercase px-5 py-3 bg-cv-teal text-white hover:bg-cv-teal-dark"
                 >
-                  Contact Us to Verify Benefits
+                  <span>Contact Us to Verify Benefits</span>
                 </a>
               </>
             )}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BASE_PATH } from "@/lib/basePath";
 
 export default function Footer() {
   return (
@@ -9,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
             <a href="/" className="flex items-center gap-2 mb-2">
-              <img src="/logo.svg" alt="" className="h-5 w-5" />
+              <img src={`${BASE_PATH}/logo.svg`} alt="" className="h-5 w-5" />
               <span className="font-display text-lg font-light text-cv-ink">
                 Clear Vision Optometry
               </span>

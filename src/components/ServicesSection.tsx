@@ -232,7 +232,7 @@ export default function ServicesSection() {
                   href="#book"
                   className="btn-3d-outline inline-block text-xs font-semibold tracking-[0.15em] uppercase px-8 py-4 border border-white text-white text-center sm:text-left"
                 >
-                  Book an Appointment →
+                  <span>Book an Appointment →</span>
                 </a>
                 <p className="text-xs text-white/40 font-mono tracking-wide">
                   Most major insurance accepted &nbsp;·&nbsp; No referral needed

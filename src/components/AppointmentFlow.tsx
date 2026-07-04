@@ -476,7 +476,7 @@ export default function AppointmentFlow() {
                   disabled={!canContinue()}
                   className="btn-3d cursor-pointer text-xs font-semibold tracking-widest uppercase px-8 py-3 bg-cv-teal text-white hover:bg-cv-teal-dark disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 >
-                  Continue →
+                  <span>Continue →</span>
                 </button>
               ) : (
                 <button
@@ -484,7 +484,7 @@ export default function AppointmentFlow() {
                   disabled={!canContinue()}
                   className="btn-3d cursor-pointer text-xs font-semibold tracking-widest uppercase px-8 py-3 bg-cv-teal text-white hover:bg-cv-teal-dark disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 >
-                  Confirm Appointment
+                  <span>Confirm Appointment</span>
                 </button>
               )}
             </div>

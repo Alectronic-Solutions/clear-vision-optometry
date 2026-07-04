@@ -91,13 +91,13 @@ export default function MapContactSection() {
                 href="tel:+14155552020"
                 className="btn-3d text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 bg-cv-teal text-white hover:bg-cv-teal-dark"
               >
-                Call Us
+                <span>Call Us</span>
               </a>
               <a
                 href="#book"
                 className="btn-3d-outline text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 border border-cv-teal text-cv-teal hover:bg-cv-teal hover:text-white"
               >
-                Book an Appointment
+                <span>Book an Appointment</span>
               </a>
             </div>
           </div>

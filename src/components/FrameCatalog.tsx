@@ -301,7 +301,7 @@ function TryOnModal({ frame, onClose }: { frame: Frame; onClose: () => void }) {
           className="btn-3d cursor-pointer w-full py-3.5 bg-cv-teal text-white text-xs font-semibold tracking-[0.15em] uppercase hover:bg-cv-teal-dark mb-3"
           onClick={() => {}}
         >
-          Enable Camera
+          <span>Enable Camera</span>
         </button>
         <p className="text-[10px] text-cv-ink-muted text-center mb-5">
           Camera feed stays on your device. Nothing is recorded or uploaded.
