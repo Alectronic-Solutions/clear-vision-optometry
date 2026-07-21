@@ -31,6 +31,13 @@ const doctorNameMap: Record<Doctor, string> = {
   "dr-webb": "Dr. Marcus Webb, OD",
 };
 
+const stepLabels: Record<1 | 2 | 3 | 4, string> = {
+  1: "Step 1 of 4: Reason for visit",
+  2: "Step 2 of 4: Choose your doctor",
+  3: "Step 3 of 4: Select date and time",
+  4: "Step 4 of 4: Your contact information",
+};
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -123,12 +130,22 @@ function CalendarPanel({
           const dateStr = toDateStr(day);
           const isAvailable = availableDates.has(dateStr);
           const isSelected = dateStr === activeDate;
+          const isToday = dateStr === today.toISOString().slice(0, 10);
           const isPast = new Date(dateStr + "T00:00:00") < today;
+          const fullDateLabel = new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          });
+          const statusLabel = isPast ? "past date" : isAvailable ? "available" : "no availability";
           return (
             <button
               key={i}
               disabled={!isAvailable || isPast}
               onClick={() => onSelectDate(dateStr)}
+              aria-label={`${fullDateLabel}, ${statusLabel}${isSelected ? ", selected" : ""}`}
+              aria-pressed={isSelected}
+              aria-current={isToday ? "date" : undefined}
               className={`text-[11px] font-mono h-7 w-full flex items-center justify-center transition-colors ${
                 isSelected
                   ? "bg-cv-teal text-white cursor-pointer"
@@ -260,6 +277,7 @@ export default function AppointmentFlow() {
               style={{ width: `${(step / 4) * 100}%` }}
             />
           </div>
+          <p aria-live="polite" className="sr-only">{stepLabels[step]}</p>
         </div>
 
         {/* Body: steps left, calendar right */}
@@ -279,6 +297,7 @@ export default function AppointmentFlow() {
                       <button
                         key={r.id}
                         onClick={() => setSelections((s) => ({ ...s, reason: r.id }))}
+                        aria-pressed={selected}
                         className={`btn-shine cursor-pointer w-full flex flex-row text-left border transition-colors ${
                           selected
                             ? "border-cv-teal"
@@ -324,6 +343,7 @@ export default function AppointmentFlow() {
                     <button
                       key={d.id}
                       onClick={() => setSelections((s) => ({ ...s, doctor: d.id }))}
+                      aria-pressed={selections.doctor === d.id}
                       className={`btn-shine cursor-pointer w-full text-left p-5 border transition-colors ${
                         selections.doctor === d.id
                           ? "border-cv-teal bg-cv-teal/5 border-l-4 border-l-cv-teal"

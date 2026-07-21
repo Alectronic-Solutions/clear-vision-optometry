@@ -13,18 +13,19 @@ export default function HeroSection() {
               <span className="text-green-400 font-semibold tracking-widest uppercase">Open Now</span>
             </span>
             <span className="text-white/30">|</span>
-            <a href="tel:3239352014" className="hover:text-white transition-colors tracking-wider">
-              (323) 935-2014
+            <a href="tel:+14155552020" className="hover:text-white transition-colors tracking-wider">
+              +1 (415) 555-2020
             </a>
           </div>
 
           {/* 20/20 anchor */}
           <h1 className="font-display text-8xl lg:text-[9rem] xl:text-[10rem] font-light leading-none text-white mb-3 tracking-tight drop-shadow-sm">
-            20/20
+            <span aria-hidden="true">20/20</span>
+            <span className="sr-only">Clear Vision Optometry — 20/20 Eye Care in San Francisco</span>
           </h1>
 
           {/* Practice name */}
-          <p className="font-sans text-sm tracking-[0.22em] uppercase text-white/80 mb-6">
+          <p aria-hidden="true" className="font-sans text-sm tracking-[0.22em] uppercase text-white/80 mb-6">
             Clear Vision Optometry
           </p>
 
@@ -40,7 +41,7 @@ export default function HeroSection() {
           <div className="flex items-center gap-2 mb-10">
             <span className="w-2 h-2 rounded-full bg-cv-teal shrink-0" />
             <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/80">
-              Wilshire Blvd &amp; Fairfax Ave — Mid-City / Miracle Mile
+              123 Vision Blvd, San Francisco, CA 94102
             </p>
           </div>
 

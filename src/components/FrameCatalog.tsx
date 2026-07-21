@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { frames, type Material, type FrameShape, type FaceFit, type Frame } from "@/data/optometry";
 
 const materialLabels: Record<Material, string> = {
@@ -258,6 +258,44 @@ function GlassesIcon({ shape, colorHex, id: iconId }: { shape: FrameShape; color
 }
 
 function TryOnModal({ frame, onClose }: { frame: Frame; onClose: () => void }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerElementRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    triggerElementRef.current = document.activeElement as HTMLElement;
+    closeButtonRef.current?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !dialogRef.current) return;
+
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      triggerElementRef.current?.focus();
+    };
+  }, [onClose]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-cv-ink/60 backdrop-blur-sm"
@@ -266,8 +304,9 @@ function TryOnModal({ frame, onClose }: { frame: Frame; onClose: () => void }) {
       aria-label={`Virtual Try-On: ${frame.name}`}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-cv-surface border border-cv-border w-full sm:max-w-md p-6 sm:p-8 relative rounded-t-xl sm:rounded-none">
+      <div ref={dialogRef} className="bg-cv-surface border border-cv-border w-full sm:max-w-md p-6 sm:p-8 relative rounded-t-xl sm:rounded-none">
         <button
+          ref={closeButtonRef}
           onClick={onClose}
           className="cursor-pointer absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-cv-ink-muted hover:text-cv-ink hover:bg-cv-bg transition-colors rounded-full text-base"
           aria-label="Close"
@@ -292,26 +331,27 @@ function TryOnModal({ frame, onClose }: { frame: Frame; onClose: () => void }) {
               </svg>
             </div>
             <p className="text-xs text-cv-ink-muted leading-relaxed">
-              Allow camera access to preview<br />{frame.name} on your face
+              Camera preview for {frame.name}<br />is coming soon
             </p>
           </div>
         </div>
 
         <button
-          className="btn-3d cursor-pointer w-full py-3.5 bg-cv-teal text-white text-xs font-semibold tracking-[0.15em] uppercase hover:bg-cv-teal-dark mb-3"
-          onClick={() => {}}
+          className="w-full py-3.5 bg-cv-border text-cv-ink-muted text-xs font-semibold tracking-[0.15em] uppercase mb-3 cursor-not-allowed"
+          disabled
+          aria-disabled="true"
         >
-          <span>Enable Camera</span>
+          <span>Camera Try-On — Coming Soon</span>
         </button>
         <p className="text-[10px] text-cv-ink-muted text-center mb-5">
-          Camera feed stays on your device. Nothing is recorded or uploaded.
+          Live camera try-on isn&apos;t available yet. Check back soon, or book an appointment to try frames in person.
         </p>
 
         <div className="pt-5 border-t border-cv-border">
           <dl className="flex gap-6 font-mono text-[10px] text-cv-ink-muted">
             <div><dt className="tracking-widest uppercase mb-0.5">Size</dt><dd className="text-cv-ink">{frame.dimensions}</dd></div>
             <div><dt className="tracking-widest uppercase mb-0.5">Face Fit</dt><dd className="text-cv-ink capitalize">{frame.faceFit}</dd></div>
-            <div><dt className="tracking-widest uppercase mb-0.5">Price</dt><dd className="text-cv-gold font-semibold">${frame.price}</dd></div>
+            <div><dt className="tracking-widest uppercase mb-0.5">Price</dt><dd className="text-cv-teal-dark font-semibold">${frame.price}</dd></div>
           </dl>
         </div>
       </div>

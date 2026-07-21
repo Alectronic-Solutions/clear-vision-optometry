@@ -2,9 +2,22 @@ import Link from "next/link";
 
 export const metadata = { title: "Accessibility Statement - Clear Vision Optometry" };
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+    { "@type": "ListItem", position: 2, name: "Accessibility Statement", item: "/accessibility" },
+  ],
+};
+
 export default function AccessibilityPage() {
   return (
-    <main className="max-w-3xl mx-auto px-6 py-24">
+    <main id="main-content" className="max-w-3xl mx-auto px-6 py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
+      />
       <Link href="/" className="text-xs text-cv-ink-muted hover:text-cv-teal transition-colors tracking-wide">
         &larr; Back to home
       </Link>
@@ -14,7 +27,7 @@ export default function AccessibilityPage() {
       <div className="space-y-8 text-sm text-cv-ink-muted leading-relaxed">
         <section>
           <h2 className="text-[10px] tracking-[0.2em] uppercase text-cv-ink mb-3">Our Standard</h2>
-          <p>This site targets WCAG 2.1 Level AA. We test for sufficient color contrast, keyboard navigability, screen reader compatibility, and text alternatives for non-text content.</p>
+          <p>We are actively working toward WCAG 2.1 Level AA conformance across the site, including color contrast, keyboard navigability, screen reader compatibility, and text alternatives for non-text content. This is an ongoing process, not a certified guarantee.</p>
         </section>
         <section>
           <h2 className="text-[10px] tracking-[0.2em] uppercase text-cv-ink mb-3">Known Limitations</h2>

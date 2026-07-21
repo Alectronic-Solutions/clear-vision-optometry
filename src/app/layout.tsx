@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+import { BASE_PATH } from "@/lib/basePath";
+import { faqs } from "@/data/faq";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const fraunces = Fraunces({
@@ -18,24 +22,37 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
+const SITE_URL = "https://alectronic-solutions.github.io" + BASE_PATH;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Clear Vision Optometry | San Francisco Eye Care",
   description:
     "Comprehensive eye exams, designer frames, and contact lens fittings in San Francisco. In-network with VSP, EyeMed, Davis Vision, and more. Book your exam today.",
-  keywords: [
-    "optometrist",
-    "eye exam",
-    "San Francisco",
-    "eyeglasses",
-    "contact lenses",
-    "VSP",
-    "EyeMed",
-    "vision insurance",
-  ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Clear Vision Optometry",
     description: "San Francisco eye care. Book your comprehensive exam today.",
     type: "website",
+    url: "/",
+    siteName: "Clear Vision Optometry",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Clear Vision Optometry — San Francisco Eye Care",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Clear Vision Optometry | San Francisco Eye Care",
+    description: "Comprehensive eye exams, designer frames, and contact lens fittings in San Francisco.",
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -43,7 +60,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["MedicalBusiness", "Optician"],
   name: "Clear Vision Optometry",
-  url: "https://clearvisionoptometry.com",
+  url: SITE_URL,
   telephone: "+1-415-555-2020",
   priceRange: "$$",
   medicalSpecialty: "Optometry",
@@ -117,6 +134,19 @@ const jsonLd = {
   },
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -134,8 +164,20 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-cv-bg text-cv-ink">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-cv-teal focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:rounded"
+        >
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

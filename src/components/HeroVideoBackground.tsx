@@ -8,11 +8,16 @@ const VIDEOS = [
   `${BASE_PATH}/videos/hero-2.mp4`,
   `${BASE_PATH}/videos/hero-3.mp4`,
 ];
+const POSTER = `${BASE_PATH}/images/hero-poster.jpg`;
 const FADE_DURATION_MS = 5000;
 
 export default function HeroVideoBackground() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  // Only the initially-active layer loads on first paint; other layers'
+  // (small, re-encoded) sources are fetched only once they're about to be
+  // shown, so the browser isn't asked to fetch all three videos concurrently.
+  const [loadedIndices, setLoadedIndices] = useState(() => new Set([0]));
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -24,7 +29,11 @@ export default function HeroVideoBackground() {
 
   const advance = () => {
     if (reducedMotion) return;
-    setActiveIndex((i) => (i + 1) % VIDEOS.length);
+    setActiveIndex((i) => {
+      const next = (i + 1) % VIDEOS.length;
+      setLoadedIndices((prev) => (prev.has(next) ? prev : new Set(prev).add(next)));
+      return next;
+    });
   };
 
   return (
@@ -33,7 +42,9 @@ export default function HeroVideoBackground() {
         <VideoLayer
           key={src}
           src={src}
+          poster={POSTER}
           active={reducedMotion ? i === 0 : i === activeIndex}
+          shouldLoad={reducedMotion ? i === 0 : loadedIndices.has(i)}
           onNearEnd={advance}
         />
       ))}
@@ -45,11 +56,15 @@ export default function HeroVideoBackground() {
 
 function VideoLayer({
   src,
+  poster,
   active,
+  shouldLoad,
   onNearEnd,
 }: {
   src: string;
+  poster: string;
   active: boolean;
+  shouldLoad: boolean;
   onNearEnd: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -57,7 +72,7 @@ function VideoLayer({
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoad) return;
     if (active) {
       firedRef.current = false;
       video.play().catch(() => {});
@@ -68,7 +83,7 @@ function VideoLayer({
       video.currentTime = 0;
     }, FADE_DURATION_MS);
     return () => clearTimeout(timeout);
-  }, [active]);
+  }, [active, shouldLoad]);
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
@@ -83,7 +98,9 @@ function VideoLayer({
   return (
     <video
       ref={videoRef}
-      src={src}
+      src={shouldLoad ? src : undefined}
+      poster={poster}
+      preload={active ? "auto" : "none"}
       autoPlay
       muted
       playsInline

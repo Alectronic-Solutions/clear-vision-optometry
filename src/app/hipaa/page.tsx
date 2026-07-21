@@ -2,9 +2,22 @@ import Link from "next/link";
 
 export const metadata = { title: "HIPAA Notice - Clear Vision Optometry" };
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+    { "@type": "ListItem", position: 2, name: "HIPAA Notice", item: "/hipaa" },
+  ],
+};
+
 export default function HipaaPage() {
   return (
-    <main className="max-w-3xl mx-auto px-6 py-24">
+    <main id="main-content" className="max-w-3xl mx-auto px-6 py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
+      />
       <Link href="/" className="text-xs text-cv-ink-muted hover:text-cv-teal transition-colors tracking-wide">
         &larr; Back to home
       </Link>

@@ -139,6 +139,7 @@ export default function ReviewsSection() {
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Review ${i + 1}`}
+                aria-current={i === current ? "true" : undefined}
                 className="transition-all duration-300"
                 style={{
                   width: i === current ? "1.5rem" : "0.375rem",

@@ -948,10 +948,9 @@ function generateSlots(): BookingSlot[] {
 
   const now = new Date();
   const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const endOfYear = new Date(now.getFullYear(), 11, 31);
-  const totalDays = Math.round((endOfYear.getTime() - base.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  const ROLLING_WINDOW_DAYS = 90;
 
-  for (let d = 0; d < totalDays; d++) {
+  for (let d = 0; d < ROLLING_WINDOW_DAYS; d++) {
     const date = new Date(base.getFullYear(), base.getMonth(), base.getDate() + d);
     const dow = date.getDay();
     if (dow === 0 || dow === 6) continue;
@@ -962,7 +961,6 @@ function generateSlots(): BookingSlot[] {
 
     for (const doctor of doctors) {
       for (let t = 0; t < times.length; t++) {
-        const slotIndex = d * doctors.length * times.length + doctors.indexOf(doctor) * times.length + t;
         const available = true;
 
         slots.push({
