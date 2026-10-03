@@ -1,65 +1,64 @@
+import Link from "next/link";
 import HeroVideoBackground from "@/components/HeroVideoBackground";
+import OpenStatus from "@/components/OpenStatus";
+import { clinic } from "@/lib/site";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-cv-bg overflow-hidden">
+    <section className="relative bg-cv-ink overflow-hidden">
       <HeroVideoBackground />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 lg:py-40">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-28 lg:py-40">
         <div className="max-w-xl">
           {/* Status bar */}
-          <div className="flex items-center gap-4 mb-10 text-xs font-mono text-white/80">
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-              <span className="text-green-400 font-semibold tracking-widest uppercase">Open Now</span>
-            </span>
-            <span className="text-white/30">|</span>
-            <a href="tel:+14155552020" className="hover:text-white transition-colors tracking-wider">
-              +1 (415) 555-2020
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8 sm:mb-10 text-xs font-mono text-white/85">
+            <OpenStatus />
+            <span className="text-white/30 hidden sm:inline" aria-hidden="true">|</span>
+            <a href={clinic.phoneHref} className="hover:text-white transition-colors tracking-wider">
+              {clinic.phone}
             </a>
           </div>
 
-          {/* 20/20 anchor */}
-          <h1 className="font-display text-8xl lg:text-[9rem] xl:text-[10rem] font-light leading-none text-white mb-3 tracking-tight drop-shadow-sm">
+          <h1 className="font-display text-7xl sm:text-8xl lg:text-[9rem] xl:text-[10rem] font-light leading-none text-white mb-3 tracking-tight">
             <span aria-hidden="true">20/20</span>
-            <span className="sr-only">Clear Vision Optometry — 20/20 Eye Care in San Francisco</span>
+            <span className="sr-only">Clear Vision Optometry: eye exams and eyewear in San Francisco</span>
           </h1>
 
-          {/* Practice name */}
-          <p aria-hidden="true" className="font-sans text-sm tracking-[0.22em] uppercase text-white/80 mb-6">
+          <p aria-hidden="true" className="font-sans text-xs sm:text-sm tracking-[0.22em] uppercase text-white/85 mb-6">
             Clear Vision Optometry
           </p>
 
-          {/* Divider */}
           <div className="w-full border-t border-white/25 mb-8" />
 
-          {/* Description */}
-          <p className="text-sm text-white/80 leading-relaxed max-w-sm mb-6">
-            Independent optometry providing comprehensive eye exams, contact lens fittings, myopia control, and a curated selection of premium eyewear. Not a retail chain.
+          <p className="text-[15px] sm:text-base text-white/85 leading-relaxed max-w-md mb-6">
+            Independent optometry providing comprehensive eye exams, contact lens fittings, myopia control, and a
+            curated selection of designer eyewear. Not a retail chain.
           </p>
 
-          {/* Address */}
           <div className="flex items-center gap-2 mb-10">
-            <span className="w-2 h-2 rounded-full bg-cv-teal shrink-0" />
-            <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/80">
-              123 Vision Blvd, San Francisco, CA 94102
+            <span className="w-2 h-2 rounded-full bg-cv-gold shrink-0" aria-hidden="true" />
+            <p className="text-[11px] font-mono tracking-[0.16em] uppercase text-white/85">
+              {clinic.street}, {clinic.city}, {clinic.region} {clinic.postalCode}
             </p>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap gap-4">
-            <a
-              href="#book"
-              className="btn-3d inline-flex items-center gap-2 bg-cv-teal text-white text-xs font-bold tracking-[0.15em] uppercase px-7 py-4"
+          <div className="flex flex-col min-[420px]:flex-row gap-3 sm:gap-4">
+            <Link
+              href="/#book"
+              className="btn-3d inline-flex items-center justify-center gap-2 bg-cv-teal text-white text-xs font-bold tracking-[0.15em] uppercase px-7 py-4"
             >
               <span>Book Appointment →</span>
-            </a>
-            <a
-              href="#services"
-              className="btn-3d-outline inline-flex items-center gap-2 border border-white text-white text-xs font-bold tracking-[0.15em] uppercase px-7 py-4"
+            </Link>
+            <Link
+              href="/#frames"
+              className="btn-3d-outline inline-flex items-center justify-center gap-2 border border-white text-white text-xs font-bold tracking-[0.15em] uppercase px-7 py-4"
             >
-              <span>View Services</span>
-            </a>
+              <span>Shop Frames</span>
+            </Link>
           </div>
+
+          <p className="mt-8 text-[11px] tracking-wide text-white/70">
+            In-network with VSP · EyeMed · Davis Vision · Spectra · MetLife · UHC Vision
+          </p>
         </div>
       </div>
     </section>

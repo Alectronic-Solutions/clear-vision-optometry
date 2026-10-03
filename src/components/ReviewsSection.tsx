@@ -71,90 +71,86 @@ export default function ReviewsSection() {
   const prev = () => goTo((current - 1 + reviews.length) % reviews.length);
   const next = () => goTo((current + 1) % reviews.length);
 
-  const review = reviews[current];
-
   return (
-    <section id="reviews" className="relative bg-cv-bg overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-16 z-10" style={{ background: "linear-gradient(to bottom, #ffffff, transparent)" }} />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 z-10" style={{ background: "linear-gradient(to top, #ffffff, transparent)" }} />
-      <div className="max-w-4xl mx-auto px-6 py-16 lg:py-24 text-center">
+    <section id="reviews" className="bg-cv-bg border-y border-cv-border" aria-labelledby="reviews-heading">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 lg:py-24 text-center">
 
         {/* Amber decorative quotemark */}
         <div
           className="font-display leading-none select-none mb-2"
-          style={{ fontSize: "7rem", color: "#B07D3A", lineHeight: 1, opacity: 0.9 }}
+          style={{ fontSize: "clamp(4.5rem, 12vw, 7rem)", color: "#B07D3A", lineHeight: 1, opacity: 0.9 }}
           aria-hidden="true"
         >
           &ldquo;
         </div>
 
-        <h2 className="font-display text-3xl lg:text-4xl font-light text-cv-ink mb-3">
+        <h2 id="reviews-heading" className="font-display text-3xl lg:text-4xl font-light text-cv-ink mb-3">
           What patients say
         </h2>
 
         {/* Aggregate */}
-        <div className="flex items-center justify-center gap-2 mb-14">
+        <div className="flex items-center justify-center gap-2 mb-10 sm:mb-14">
           <Stars count={5} />
           <span className="font-mono text-xs text-cv-ink-muted">4.9 · 312 reviews</span>
         </div>
 
-        {/* Fixed-height quote area so the section doesn't resize between reviews */}
-        <div className="relative" style={{ minHeight: "14rem" }}>
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center"
-            style={{
-              opacity: visible ? 1 : 0,
-              transition: `opacity ${FADE_MS}ms ease`,
-            }}
-          >
-            <blockquote className="w-full">
-              <p className="font-display text-2xl lg:text-3xl font-light text-cv-ink leading-relaxed max-w-2xl mx-auto">
-                {review.quote}
+        {/* All quotes share one grid cell, so the area is as tall as the longest one and never overlaps the controls. */}
+        <div className="grid" aria-live="polite">
+          {reviews.map((r, i) => (
+            <blockquote
+              key={r.name}
+              className="col-start-1 row-start-1 w-full flex flex-col items-center justify-center"
+              style={{
+                opacity: i === current && visible ? 1 : 0,
+                visibility: i === current ? "visible" : "hidden",
+                transition: `opacity ${FADE_MS}ms ease`,
+              }}
+              aria-hidden={i !== current}
+            >
+              <p className="font-display text-xl sm:text-2xl lg:text-3xl font-light text-cv-ink leading-relaxed max-w-2xl mx-auto">
+                {r.quote}
               </p>
               <footer className="mt-8 flex flex-col items-center gap-1.5">
-                <cite className="not-italic text-[11px] font-medium tracking-[0.12em] uppercase text-cv-ink">
-                  {review.name}
-                </cite>
-                <span className="font-mono text-[10px] text-cv-ink-muted">{review.date}</span>
+                <cite className="not-italic text-[11px] font-medium tracking-[0.12em] uppercase text-cv-ink">{r.name}</cite>
+                <span className="font-mono text-[11px] text-cv-ink-muted">{r.date}</span>
               </footer>
             </blockquote>
-          </div>
+          ))}
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-center gap-5 mt-10">
+        <div className="flex items-center justify-center gap-3 sm:gap-5 mt-10">
           <button
             onClick={prev}
             aria-label="Previous review"
-            className="w-8 h-8 flex items-center justify-center border border-cv-border text-cv-ink-muted hover:border-cv-teal hover:text-cv-teal transition-colors cursor-pointer"
+            className="w-11 h-11 flex items-center justify-center border border-cv-border text-cv-ink-muted hover:border-cv-teal hover:text-cv-teal transition-colors cursor-pointer"
           >
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M9 2L4 7l5 5" />
             </svg>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             {reviews.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                aria-label={`Review ${i + 1}`}
+                aria-label={`Show review ${i + 1} of ${reviews.length}`}
                 aria-current={i === current ? "true" : undefined}
-                className="transition-all duration-300"
-                style={{
-                  width: i === current ? "1.5rem" : "0.375rem",
-                  height: "0.375rem",
-                  borderRadius: "9999px",
-                  backgroundColor: i === current ? "#B07D3A" : "#D1D5DB",
-                }}
-              />
+                className="cursor-pointer h-11 px-1.5 flex items-center"
+              >
+                <span
+                  className="block transition-all duration-300 rounded-full h-1.5"
+                  style={{ width: i === current ? "1.5rem" : "0.375rem", backgroundColor: i === current ? "#B07D3A" : "#9CA3AF" }}
+                />
+              </button>
             ))}
           </div>
 
           <button
             onClick={next}
             aria-label="Next review"
-            className="w-8 h-8 flex items-center justify-center border border-cv-border text-cv-ink-muted hover:border-cv-teal hover:text-cv-teal transition-colors cursor-pointer"
+            className="w-11 h-11 flex items-center justify-center border border-cv-border text-cv-ink-muted hover:border-cv-teal hover:text-cv-teal transition-colors cursor-pointer"
           >
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M5 2l5 5-5 5" />

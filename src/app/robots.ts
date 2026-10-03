@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
-import { BASE_PATH } from "@/lib/basePath";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
 
-const SITE_URL = "https://alectronic-solutions.github.io" + BASE_PATH;
 
 export default function robots(): MetadataRoute.Robots {
   return {

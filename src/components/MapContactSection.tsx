@@ -1,15 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-
-const hours = [
-  { days: "Monday – Friday", time: "9:00 am – 6:00 pm" },
-  { days: "Saturday", time: "9:00 am – 2:00 pm" },
-  { days: "Sunday", time: "Closed" },
-];
-
-const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=123+Vision+Blvd+San+Francisco+CA+94102";
+import { clinic, hoursSummary as hours } from "@/lib/site";
+import OpenStatus from "@/components/OpenStatus";
 
 const MIN_ZOOM = 11;
 const MAX_ZOOM = 18;
@@ -23,12 +17,11 @@ export default function MapContactSection() {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   return (
-    <section id="contact" className="relative py-16 lg:py-24 bg-cv-bg overflow-hidden" style={{ background: "#EFF6FF" }}>
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-16 z-10" style={{ background: "linear-gradient(to bottom, #ffffff, transparent)" }} />
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="contact" className="py-16 lg:py-24 bg-cv-green-light border-t border-cv-green-border" aria-labelledby="contact-heading">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10 lg:mb-12">
           <p className="text-[10px] tracking-[0.2em] uppercase text-cv-teal mb-3">Contact</p>
-          <h2 className="font-display text-3xl lg:text-4xl font-light text-cv-ink">
+          <h2 id="contact-heading" className="font-display text-3xl lg:text-4xl font-light text-cv-ink">
             Find us
           </h2>
         </div>
@@ -40,9 +33,12 @@ export default function MapContactSection() {
               <p className="text-[10px] tracking-[0.18em] uppercase text-cv-ink-muted mb-3">
                 Address
               </p>
-              <p className="font-mono text-sm text-cv-ink leading-loose">
-                123 Vision Blvd<br />
-                San Francisco, CA 94102
+              <address className="not-italic font-mono text-sm text-cv-ink leading-loose">
+                {clinic.street}<br />
+                {clinic.city}, {clinic.region} {clinic.postalCode}
+              </address>
+              <p className="text-xs text-cv-ink-muted mt-2">
+                Street parking on Vision Blvd · Civic Center BART, 5 min walk
               </p>
             </div>
 
@@ -51,17 +47,20 @@ export default function MapContactSection() {
                 Phone
               </p>
               <a
-                href="tel:+14155552020"
+                href={clinic.phoneHref}
                 className="font-mono text-sm text-cv-ink hover:text-cv-teal transition-colors"
               >
-                +1 (415) 555-2020
+                {clinic.phone}
               </a>
             </div>
 
             <div>
-              <p className="text-[10px] tracking-[0.18em] uppercase text-cv-ink-muted mb-3">
-                Hours
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <p className="text-[10px] tracking-[0.18em] uppercase text-cv-ink-muted">Hours</p>
+                <p className="text-xs font-mono text-cv-ink">
+                  <OpenStatus tone="light" />
+                </p>
+              </div>
               <table className="w-full border-collapse">
                 <tbody>
                   {hours.map((row) => (
@@ -88,17 +87,17 @@ export default function MapContactSection() {
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 pt-2">
               <a
-                href="tel:+14155552020"
-                className="btn-3d text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 bg-cv-teal text-white hover:bg-cv-teal-dark"
+                href={clinic.phoneHref}
+                className="btn-3d inline-flex items-center min-h-11 text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 bg-cv-teal text-white hover:bg-cv-teal-dark"
               >
                 <span>Call Us</span>
               </a>
-              <a
-                href="#book"
-                className="btn-3d-outline text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 border border-cv-teal text-cv-teal hover:bg-cv-teal hover:text-white"
+              <Link
+                href="/#book"
+                className="btn-3d-outline inline-flex items-center min-h-11 text-[11px] tracking-[0.12em] uppercase px-5 py-2.5 border border-cv-teal text-cv-teal hover:bg-cv-teal hover:text-white"
               >
                 <span>Book an Appointment</span>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -114,7 +113,6 @@ export default function MapContactSection() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="absolute inset-0 w-full h-full border-0"
-                aria-label="Map showing Clear Vision Optometry at 123 Vision Blvd, San Francisco, CA 94102"
               />
 
               {/* Zoom controls */}
@@ -123,7 +121,7 @@ export default function MapContactSection() {
                   onClick={() => setZoom((z) => Math.min(z + 1, MAX_ZOOM))}
                   disabled={zoom >= MAX_ZOOM}
                   aria-label="Zoom in"
-                  className="w-8 h-8 flex items-center justify-center text-cv-ink text-base font-light hover:bg-cv-teal hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-b border-cv-border"
+                  className="cursor-pointer w-10 h-10 flex items-center justify-center text-cv-ink text-base font-light hover:bg-cv-teal hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-b border-cv-border"
                 >
                   +
                 </button>
@@ -131,7 +129,7 @@ export default function MapContactSection() {
                   onClick={() => setZoom((z) => Math.max(z - 1, MIN_ZOOM))}
                   disabled={zoom <= MIN_ZOOM}
                   aria-label="Zoom out"
-                  className="w-8 h-8 flex items-center justify-center text-cv-ink text-base font-light hover:bg-cv-teal hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="cursor-pointer w-10 h-10 flex items-center justify-center text-cv-ink text-base font-light hover:bg-cv-teal hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   −
                 </button>
@@ -144,12 +142,12 @@ export default function MapContactSection() {
                 123 Vision Blvd · San Francisco CA
               </span>
               <a
-                href={MAPS_URL}
+                href={clinic.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-shine text-[10px] tracking-[0.15em] uppercase px-3 py-1 border border-cv-border text-cv-ink hover:border-cv-teal hover:text-cv-teal transition-colors bg-cv-surface"
+                className="btn-shine inline-flex items-center min-h-9 text-[10px] tracking-[0.15em] uppercase px-3 border border-cv-border text-cv-ink hover:border-cv-teal hover:text-cv-teal transition-colors bg-cv-surface"
               >
-                Get Directions ↗
+                Get Directions ↗<span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
           </div>

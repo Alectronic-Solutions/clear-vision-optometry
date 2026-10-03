@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { insuranceProviders, type InsuranceProvider } from "@/data/optometry";
+import { clinic } from "@/lib/site";
 
 export default function InsuranceChecker() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -14,7 +15,7 @@ export default function InsuranceChecker() {
 
   return (
     <section id="insurance" className="py-16 lg:py-24 bg-cv-bg">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Header */}
         <div className="mb-8 pb-4 border-b border-cv-border">
@@ -36,9 +37,13 @@ export default function InsuranceChecker() {
               key={p.id}
               onClick={() => handleSelect(p)}
               aria-pressed={selectedId === p.id}
-              className="btn-3d cursor-pointer text-sm px-5 py-2.5 bg-cv-teal text-white"
+              className={`cursor-pointer text-sm px-4 sm:px-5 min-h-11 border transition-colors ${
+                selectedId === p.id
+                  ? "bg-cv-teal border-cv-teal text-white"
+                  : "bg-cv-surface border-cv-border text-cv-ink hover:border-cv-teal hover:text-cv-teal"
+              }`}
             >
-              <span>{p.name}</span>
+              {p.name}
             </button>
           ))}
         </div>
@@ -103,17 +108,17 @@ export default function InsuranceChecker() {
             ) : (
               <>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[10px] tracking-widest uppercase font-semibold text-amber-600 border border-amber-400 px-3 py-1">
+                  <span className="text-[10px] tracking-widest uppercase font-semibold text-amber-800 border border-amber-500 px-3 py-1">
                     Out of Network
                   </span>
                   <span className="text-sm font-semibold text-cv-ink">{selected.name}</span>
                 </div>
                 <p className="text-sm text-cv-ink-muted">{selected.notes}</p>
                 <a
-                  href="#book"
+                  href={clinic.phoneHref}
                   className="btn-3d cursor-pointer inline-block mt-4 text-xs font-semibold tracking-widest uppercase px-5 py-3 bg-cv-teal text-white hover:bg-cv-teal-dark"
                 >
-                  <span>Contact Us to Verify Benefits</span>
+                  <span>Call to Verify Benefits</span>
                 </a>
               </>
             )}
@@ -121,27 +126,50 @@ export default function InsuranceChecker() {
         )}
 
         {!selected && (
-          <div className="p-12 text-center">
-            <svg
-              className="mx-auto mb-4 text-cv-border"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <p className="text-sm text-cv-ink-muted">
-              Choose a plan above to see your benefits.
-            </p>
-          </div>
+          <p className="p-6 border border-dashed border-cv-border text-center text-sm text-cv-ink-muted">
+            Choose a plan above to see your benefits.
+          </p>
         )}
+
+        {/* Compare matrix */}
+        <details className="mt-10 group border border-cv-border bg-cv-surface">
+          <summary className="cursor-pointer list-none flex items-center justify-between px-5 min-h-14 text-sm font-medium text-cv-ink">
+            Compare all in-network plans
+            <svg viewBox="0 0 16 16" className="w-4 h-4 text-cv-ink-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M3 6l5 5 5-5" />
+            </svg>
+          </summary>
+          <div className="overflow-x-auto border-t border-cv-border">
+            <table className="w-full min-w-[560px] text-sm">
+              <caption className="sr-only">In-network vision plan benefits at Clear Vision Optometry</caption>
+              <thead>
+                <tr className="text-left text-[10px] tracking-widest uppercase text-cv-ink-muted bg-cv-bg">
+                  <th scope="col" className="px-5 py-3 font-medium">Plan</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Exam copay</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Frames</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Contacts</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Frequency</th>
+                </tr>
+              </thead>
+              <tbody>
+                {insuranceProviders
+                  .filter((p) => p.inNetwork)
+                  .map((p) => (
+                    <tr key={p.id} className="border-t border-cv-border">
+                      <th scope="row" className="px-5 py-3 text-left font-medium text-cv-ink">{p.name}</th>
+                      <td className="px-5 py-3 font-mono text-cv-ink">{p.examCopay === 0 ? "$0" : `$${p.examCopay}`}</td>
+                      <td className="px-5 py-3 font-mono text-cv-ink">${p.frameAllowance}</td>
+                      <td className="px-5 py-3 font-mono text-cv-ink">${p.contactAllowance}</td>
+                      <td className="px-5 py-3 text-cv-ink-muted">{p.examFrequency}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="px-5 py-4 text-xs text-cv-ink-muted border-t border-cv-border">
+            Typical benefits shown. Your plan may differ; we verify coverage before every visit.
+          </p>
+        </details>
       </div>
     </section>
   );

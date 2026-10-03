@@ -1,7 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
-import { BASE_PATH } from "@/lib/basePath";
 import { faqs } from "@/data/faq";
+import { doctors } from "@/data/doctors";
+import { services } from "@/data/services";
+import { insuranceProviders } from "@/data/optometry";
+import { SITE_URL, clinic } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import MobileActionBar from "@/components/MobileActionBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,54 +29,44 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
-const SITE_URL = "https://alectronic-solutions.github.io" + BASE_PATH;
+export const viewport: Viewport = {
+  themeColor: "#FFFFFF",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: "Clear Vision Optometry | San Francisco Eye Care",
-  description:
-    "Comprehensive eye exams, designer frames, and contact lens fittings in San Francisco. In-network with VSP, EyeMed, Davis Vision, and more. Book your exam today.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Clear Vision Optometry",
-    description: "San Francisco eye care. Book your comprehensive exam today.",
-    type: "website",
-    url: "/",
-    siteName: "Clear Vision Optometry",
-    locale: "en_US",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Clear Vision Optometry — San Francisco Eye Care",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
+  metadataBase: new URL(SITE_URL + "/"),
+  ...pageMetadata({
     title: "Clear Vision Optometry | San Francisco Eye Care",
-    description: "Comprehensive eye exams, designer frames, and contact lens fittings in San Francisco.",
-    images: ["/og-image.jpg"],
+    description:
+      "Comprehensive eye exams, designer frames, and contact lens fittings in San Francisco. In-network with VSP, EyeMed, Davis Vision, and more. Book your exam today.",
+    path: "",
+  }),
+  title: {
+    default: "Clear Vision Optometry | San Francisco Eye Care",
+    template: "%s | Clear Vision Optometry",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["MedicalBusiness", "Optician"],
-  name: "Clear Vision Optometry",
-  url: SITE_URL,
+  "@id": `${SITE_URL}/#clinic`,
+  name: clinic.name,
+  url: `${SITE_URL}/`,
+  image: `${SITE_URL}/og-image.jpg`,
+  logo: `${SITE_URL}/logo.svg`,
   telephone: "+1-415-555-2020",
+  email: clinic.email,
   priceRange: "$$",
   medicalSpecialty: "Optometry",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "123 Vision Blvd",
-    addressLocality: "San Francisco",
-    addressRegion: "CA",
-    postalCode: "94102",
+    streetAddress: clinic.street,
+    addressLocality: clinic.city,
+    addressRegion: clinic.region,
+    postalCode: clinic.postalCode,
     addressCountry: "US",
   },
   geo: {
@@ -77,6 +74,7 @@ const jsonLd = {
     latitude: 37.7749,
     longitude: -122.4194,
   },
+  hasMap: clinic.mapsUrl,
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -91,46 +89,34 @@ const jsonLd = {
       closes: "14:00",
     },
   ],
-  employee: [
-    {
-      "@type": "Physician",
-      name: "Dr. Sarah Chen",
-      jobTitle: "Optometrist",
-      medicalSpecialty: "Optometry",
-      identifier: {
-        "@type": "PropertyValue",
-        name: "NPI",
-        value: "1234567890",
-      },
+  employee: doctors.map((d) => ({
+    "@type": "Physician",
+    name: d.name,
+    jobTitle: "Optometrist",
+    medicalSpecialty: "Optometry",
+    image: `${SITE_URL}${d.photo}-720.webp`,
+    identifier: {
+      "@type": "PropertyValue",
+      name: "NPI",
+      value: d.npi,
     },
-    {
-      "@type": "Physician",
-      name: "Dr. Marcus Webb",
-      jobTitle: "Optometrist",
-      medicalSpecialty: "Optometry",
-      identifier: {
-        "@type": "PropertyValue",
-        name: "NPI",
-        value: "0987654321",
-      },
-    },
-  ],
-  availableService: [
-    { "@type": "MedicalProcedure", name: "Comprehensive Eye Exam" },
-    { "@type": "MedicalProcedure", name: "Contact Lens Fitting" },
-    { "@type": "MedicalProcedure", name: "Pediatric Eye Exam" },
-    { "@type": "MedicalProcedure", name: "Glaucoma Screening" },
-  ],
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Eyewear Collection",
-    description: "Designer frames from Lindberg, Oliver Peoples, Warby Parker, and more.",
-  },
-  paymentAccepted: "Cash, Credit Card, Insurance",
+  })),
+  availableService: services.map((s) => ({
+    "@type": "MedicalProcedure",
+    name: s.title,
+    url: `${SITE_URL}/services/${s.slug}/`,
+  })),
+  healthPlanNetworkId: insuranceProviders.filter((p) => p.inNetwork).map((p) => p.name),
+  paymentAccepted: "Cash, Credit Card, Vision Insurance, HSA, FSA",
   currenciesAccepted: "USD",
   areaServed: {
     "@type": "City",
     name: "San Francisco",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.9",
+    reviewCount: "312",
   },
 };
 
@@ -155,7 +141,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
       <head>
         <script
@@ -171,14 +158,17 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-cv-bg text-cv-ink">
+      <body className="min-h-dvh flex flex-col bg-cv-bg text-cv-ink pb-14 sm:pb-0">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-cv-teal focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:rounded"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:bg-cv-teal focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold"
         >
           Skip to content
         </a>
-        {children}
+        <Nav />
+        <div className="flex-1">{children}</div>
+        <Footer />
+        <MobileActionBar />
       </body>
     </html>
   );
