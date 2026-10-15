@@ -1,14 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
-import { faqs } from "@/data/faq";
-import { doctors } from "@/data/doctors";
-import { services } from "@/data/services";
-import { insuranceProviders } from "@/data/optometry";
-import { SITE_URL, clinic } from "@/lib/site";
+import { SITE_URL } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import MobileActionBar from "@/components/MobileActionBar";
+import DemoNotice from "./DemoNotice";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,90 +44,8 @@ export const metadata: Metadata = {
     default: "Clear Vision Optometry | San Francisco Eye Care",
     template: "%s | Clear Vision Optometry",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": ["MedicalBusiness", "Optician"],
-  "@id": `${SITE_URL}/#clinic`,
-  name: clinic.name,
-  url: `${SITE_URL}/`,
-  image: `${SITE_URL}/og-image.jpg`,
-  logo: `${SITE_URL}/logo.svg`,
-  telephone: "+1-415-555-2020",
-  email: clinic.email,
-  priceRange: "$$",
-  medicalSpecialty: "Optometry",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: clinic.street,
-    addressLocality: clinic.city,
-    addressRegion: clinic.region,
-    postalCode: clinic.postalCode,
-    addressCountry: "US",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 37.7749,
-    longitude: -122.4194,
-  },
-  hasMap: clinic.mapsUrl,
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:00",
-      closes: "18:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Saturday"],
-      opens: "09:00",
-      closes: "14:00",
-    },
-  ],
-  employee: doctors.map((d) => ({
-    "@type": "Physician",
-    name: d.name,
-    jobTitle: "Optometrist",
-    medicalSpecialty: "Optometry",
-    image: `${SITE_URL}${d.photo}-720.webp`,
-    identifier: {
-      "@type": "PropertyValue",
-      name: "NPI",
-      value: d.npi,
-    },
-  })),
-  availableService: services.map((s) => ({
-    "@type": "MedicalProcedure",
-    name: s.title,
-    url: `${SITE_URL}/services/${s.slug}/`,
-  })),
-  healthPlanNetworkId: insuranceProviders.filter((p) => p.inNetwork).map((p) => p.name),
-  paymentAccepted: "Cash, Credit Card, Vision Insurance, HSA, FSA",
-  currenciesAccepted: "USD",
-  areaServed: {
-    "@type": "City",
-    name: "San Francisco",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.9",
-    reviewCount: "312",
-  },
-};
-
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.a,
-    },
-  })),
+  // Fictional business: keep it out of search (see DemoNotice).
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
@@ -144,20 +59,6 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-      </head>
       <body className="min-h-dvh flex flex-col bg-cv-bg text-cv-ink pb-14 sm:pb-0">
         <a
           href="#main-content"
@@ -168,6 +69,7 @@ export default function RootLayout({
         <Nav />
         <div className="flex-1">{children}</div>
         <Footer />
+        <DemoNotice />
         <MobileActionBar />
       </body>
     </html>
